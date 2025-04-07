@@ -1,16 +1,28 @@
 <script setup>
+import AppLayout from '@/layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 
+const props = defineProps({
+    company: {
+        required: true,
+        type: Object,
+    },
+    users: {
+        required: true,
+        type: Object,
+    },
+});
+
 const form = useForm({
-    name: '',
-    email: '',
-    rol_id: '',
-    password: '',
-    password_confirmation: '',
+    name: props.company.name,
+    email: props.company.email,
+    address: props.company.address,
+    phone: props.company.phone,
+    user_id: props.company.user_id,
 });
 
 const submit = () => {
-    form.post(route('users.store'), {
+    form.put(route('companies.update', props.company.id), {
         onError: (errors) => {
             console.log(errors);
 
@@ -26,13 +38,14 @@ const submit = () => {
 </script>
 
 <template>
+    <AppLayout>
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
-            <h1>Crear usuario</h1>
+            <h1>Actualizar company</h1>
             <div class="w-full rounded-lg bg-white shadow sm:max-w-md md:mt-0 xl:p-0 dark:border dark:border-gray-700 dark:bg-gray-800">
                 <div class="space-y-4 p-6 sm:p-8 md:space-y-6">
                     <h1 class="text-xl leading-tight font-bold tracking-tight text-gray-900 md:text-2xl dark:text-white">Create an account</h1>
-                    <form class="space-y-4 md:space-y-6" method="post">
+                    <form class="space-y-4 md:space-y-6" method="put">
                         <div>
                             <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Your name</label>
                             <input
@@ -64,52 +77,47 @@ const submit = () => {
                             </p>
                         </div>
                         <div>
+                            <label for="address" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Your address</label>
+                            <input
+                                v-model="form.address"
+                                type="text"
+                                name="address"
+                                id="address"
+                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                placeholder="name@company.com"
+                                required=""
+                            />
+                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.address">
+                                {{ form.errors.address }}
+                            </p>
+                        </div>
+                        <div>
+                            <label for="address" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Your phone</label>
+                            <input
+                                v-model="form.phone"
+                                type="tel"
+                                name="phone"
+                                id="phone"
+                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                placeholder="name@company.com"
+                                required=""
+                            />
+                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.phone">
+                                {{ form.errors.phone }}
+                            </p>
+                        </div>
+                        <div>
                             <select
-                                v-model="form.rol_id"
-                                id="role"
-                                name="role"
+                                v-model="form.user_id"
+                                id="user_id"
+                                name="user_id"
                                 class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                             >
-                                <option selected>Choose a role</option>
-                                <option value="1">Super Admin</option>
-                                <option value="2">Admin</option>
-                                <option value="3">Worker</option>
-                                <option value="4">Client</option>
+                                <option>Choose a owner</option>
+                                <option v-for="user in users" :value="user.id">{{ user.name }}</option>
                             </select>
-                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.name">
-                                {{ form.errors.rol_id }}
-                            </p>
-                        </div>
-                        <div>
-                            <label for="password" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input
-                                v-model="form.password"
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="••••••••"
-                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                required=""
-                            />
-                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.name">
-                                {{ form.errors.password }}
-                            </p>
-                        </div>
-                        <div>
-                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                >Confirm password</label
-                            >
-                            <input
-                                v-model="form.password_confirmation"
-                                type="password"
-                                name="password_confirmation"
-                                id="password_confirmation"
-                                placeholder="••••••••"
-                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                required=""
-                            />
-                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.name">
-                                {{ form.errors.password_confirmation }}
+                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.user_id">
+                                {{ form.errors.user_id }}
                             </p>
                         </div>
                         <button
@@ -124,4 +132,5 @@ const submit = () => {
             </div>
         </div>
     </section>
+</AppLayout>
 </template>

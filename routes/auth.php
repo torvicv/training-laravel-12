@@ -8,7 +8,9 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UserController;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -89,31 +91,63 @@ Route::middleware('auth')->group(function () {
     });
     Route::prefix('companies')->group(function () {
         Route::get('/', [
-            UserController::class, 'index'
+            CompanyController::class, 'index'
         ])->name('companies.index')
+        ->can('viewAny', Company::class);
+        Route::get('/create', [
+            CompanyController::class, 'create'
+        ])->name('companies.create')
+        ->can('create', Company::class);
+        Route::get('/{company}', [
+            CompanyController::class, 'show'
+        ])->name('companies.show')
+        ->can('view', 'company');
+        Route::get('/{company}/edit', [
+            CompanyController::class, 'edit'
+        ])->name('companies.edit')
+        ->can('update', 'company');
+        Route::put('/{company}', [
+            CompanyController::class, 'update'
+        ])->name('companies.update');
+        Route::delete('/{company}/destroy', [
+            CompanyController::class, 'destroy'
+        ])->name('companies.destroy')
+        ->can('delete', 'company');
+        Route::post('/', [
+            CompanyController::class, 'store'
+        ])->name('companies.store')
+        ->can('create', Company::class);
+    });
+
+    Route::prefix('clients')->group(function () {
+        Route::get('/', [
+            UserController::class, 'index'
+        ])->name('clients.index')
         ->can('viewAny', User::class);
         Route::get('/create', [
             UserController::class, 'create'
-        ])->name('companies.create')
+        ])->name('clients.create')
         ->can('create', User::class);
         Route::get('/{user}', [
             UserController::class, 'show'
-        ])->name('companies.show')
+        ])->name('clients.show')
         ->can('view', 'user');
         Route::get('/{user}/edit', [
             UserController::class, 'edit'
-        ])->name('companies.edit')
+        ])->name('clients.edit')
         ->can('update', 'user');
         Route::put('/{user}', [
             UserController::class, 'update'
-        ])->name('companies.update');
+        ])->name('clients.update');
         Route::delete('/{user}', [
             UserController::class, 'destroy'
-        ])->name('companies.destroy')
+        ])->name('clients.destroy')
         ->can('delete', 'user');
         Route::post('/', [
             UserController::class, 'store'
-        ])->name('companies.store')
+        ])->name('clients.store')
         ->can('create', User::class);
     });
+
+
 });

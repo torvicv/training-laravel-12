@@ -1,16 +1,24 @@
 <script setup>
 import { useForm } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
+
+defineProps({
+    users: {
+        required: true,
+        type: Object,
+    },
+});
 
 const form = useForm({
     name: '',
     email: '',
-    rol_id: '',
-    password: '',
-    password_confirmation: '',
+    address: '',
+    phone: '',
+    user_id: '',
 });
 
 const submit = () => {
-    form.post(route('users.store'), {
+    form.post(route('companies.store'), {
         onError: (errors) => {
             console.log(errors);
 
@@ -26,6 +34,7 @@ const submit = () => {
 </script>
 
 <template>
+    <AppLayout>
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
             <h1>Crear usuario</h1>
@@ -64,52 +73,47 @@ const submit = () => {
                             </p>
                         </div>
                         <div>
+                            <label for="address" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Your address</label>
+                            <input
+                                v-model="form.address"
+                                type="text"
+                                name="address"
+                                id="address"
+                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                placeholder="name@company.com"
+                                required=""
+                            />
+                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.address">
+                                {{ form.errors.address }}
+                            </p>
+                        </div>
+                        <div>
+                            <label for="address" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Your phone</label>
+                            <input
+                                v-model="form.phone"
+                                type="tel"
+                                name="phone"
+                                id="phone"
+                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                                placeholder="name@company.com"
+                                required=""
+                            />
+                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.phone">
+                                {{ form.errors.phone }}
+                            </p>
+                        </div>
+                        <div>
                             <select
-                                v-model="form.rol_id"
-                                id="role"
-                                name="role"
+                                v-model="form.user_id"
+                                id="user_id"
+                                name="user_id"
                                 class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                             >
-                                <option selected>Choose a role</option>
-                                <option value="1">Super Admin</option>
-                                <option value="2">Admin</option>
-                                <option value="3">Worker</option>
-                                <option value="4">Client</option>
+                                <option selected>Choose a owner</option>
+                                <option v-for="user in users" :value="user.id">{{ user.name }}</option>
                             </select>
-                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.name">
-                                {{ form.errors.rol_id }}
-                            </p>
-                        </div>
-                        <div>
-                            <label for="password" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input
-                                v-model="form.password"
-                                type="password"
-                                name="password"
-                                id="password"
-                                placeholder="••••••••"
-                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                required=""
-                            />
-                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.name">
-                                {{ form.errors.password }}
-                            </p>
-                        </div>
-                        <div>
-                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-                                >Confirm password</label
-                            >
-                            <input
-                                v-model="form.password_confirmation"
-                                type="password"
-                                name="password_confirmation"
-                                id="password_confirmation"
-                                placeholder="••••••••"
-                                class="focus:ring-primary-600 focus:border-primary-600 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                                required=""
-                            />
-                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.name">
-                                {{ form.errors.password_confirmation }}
+                            <p class="text-xs text-red-600" v-if="form.errors && form.errors.user_id">
+                                {{ form.errors.user_id }}
                             </p>
                         </div>
                         <button
@@ -117,11 +121,12 @@ const submit = () => {
                             type="submit"
                             class="bg-blue-600 hover:bg-blue-700 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 w-full rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white focus:ring-4 focus:outline-none"
                         >
-                            Create an account
+                            Create a company
                         </button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
+</AppLayout>
 </template>
