@@ -1,9 +1,24 @@
 <script setup>
+import { Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const isOpen = ref(false);
 const open = () => {
     isOpen.value = !isOpen.value;
+};
+
+const form = useForm({});
+
+const logout = () => {
+    form.post(route('logout'), {
+        onError: (errors) => {
+            console.log(errors);
+        },
+        onSuccess: () => {
+            form.reset();
+            form.clearErrors();
+        },
+    });
 };
 </script>
 
@@ -30,7 +45,8 @@ const open = () => {
                 clip-rule="evenodd"
             />
         </svg>
-        <svg v-if="isOpen"
+        <svg
+            v-if="isOpen"
             class="h-6 w-6 text-gray-800 dark:text-white"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +65,7 @@ const open = () => {
 
     <aside
         id="default-sidebar"
-        class="relative top-0 left-0 h-screen w-64"
+        class="relative top-0 left-0 flex h-screen w-64 flex-col justify-between"
         aria-label="Sidebar"
         :class="{ 'animate-(--animate-menu-sidebar)': isOpen, 'animate-(--animate-menu-sidebar-reverse)': !isOpen }"
     >
@@ -73,7 +89,10 @@ const open = () => {
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                    <Link
+                        href="#"
+                        class="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                    >
                         <svg
                             class="h-5 w-5 shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                             aria-hidden="true"
@@ -90,7 +109,7 @@ const open = () => {
                             class="ms-3 inline-flex items-center justify-center rounded-full bg-gray-100 px-2 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                             >Pro</span
                         >
-                    </a>
+                    </Link>
                 </li>
                 <li>
                     <a href="#" class="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
@@ -113,7 +132,10 @@ const open = () => {
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                    <Link
+                        :href="route('users.index')"
+                        class="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                    >
                         <svg
                             class="h-5 w-5 shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                             aria-hidden="true"
@@ -126,7 +148,7 @@ const open = () => {
                             />
                         </svg>
                         <span class="ms-3 flex-1 whitespace-nowrap">Users</span>
-                    </a>
+                    </Link>
                 </li>
                 <li>
                     <a href="#" class="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
@@ -185,6 +207,32 @@ const open = () => {
                     </a>
                 </li>
             </ul>
+        </div>
+        <div>
+            <div>
+                <form method="post">
+                    <button type="button" @click="logout" class="flex items-center bg-transparent px-3 py-2">
+                        Sign out
+                        <svg
+                            class="h-6 w-6 text-gray-800 dark:text-white"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M16 12H4m12 0-4 4m4-4-4-4m3-4h2a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-2"
+                            />
+                        </svg>
+                    </button>
+                </form>
+            </div>
         </div>
     </aside>
 </template>
