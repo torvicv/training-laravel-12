@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\PdfReader;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Inertia\Inertia;
 
 class ClientController extends Controller
 {
@@ -17,6 +18,7 @@ class ClientController extends Controller
         return inertia('Client/Form', [
             'pdfUrl'     => route('pdf.plantilla', $client->id),
             'submitRoute'=> route('pdf.firmar', $client->id),
+            'redirectUrl'=> session('redirectUrl') ?? null,
         ]);
     }
 
@@ -26,7 +28,7 @@ class ClientController extends Controller
         $data = $request->validate([
             'signerName' => 'required|string',
             'signerDni'  => 'required|string',
-            'signature'  => 'required|image|max:2048',
+            'signature'  => 'required|image|max:22048',
         ]);
 
         // 1) Guarda la imagen de firma temporalmente
@@ -45,10 +47,10 @@ class ClientController extends Controller
         $pdf->SetTextColor(0, 0, 0);
 
         // Agrega algunos textos para simular una plantilla vacía (ajusta esto según tu plantilla real)
-        $pdf->SetXY(50, 50);
+        $pdf->SetXY(50, 200);
         $pdf->Write(0, "Nombre de firma: ____________");
 
-        $pdf->SetXY(50, 60);
+        $pdf->SetXY(50, 210);
         $pdf->Write(0, "DNI de firma: ____________");
 
         // Guarda la plantilla vacía
@@ -70,6 +72,7 @@ class ClientController extends Controller
 
         // Sólo en la primera página incrustamos los datos
         if ($i === 1) {
+            $pdf->SetXY(0, 0);
             // Texto
             $pdf->SetFont('Helvetica', '', 12);
             $pdf->SetTextColor(0, 0, 0);
@@ -98,7 +101,7 @@ class ClientController extends Controller
 
     Storage::disk('public')->download("firmados/{$client->id}-firmado.pdf");
 
-    return redirect()->route('pdf.download', $client->id);
+    return back()->with('redirectUrl', route('pdf.download', $client->id));
     }
 
     public function generarPlantilla($clientId)
@@ -119,12 +122,12 @@ class ClientController extends Controller
 
 public function descargar(Client $client)
 {
-    $path = storage_path("app/public/firmados/{$client->id}-firmado.pdf");
+    $path = "storage/firmados/{$client->id}-firmado.pdf";
 
-    if (!file_exists($path)) {
-        abort(404, 'Archivo no encontrado');
-    }
+    //if (file_exists($path)) {
+    //    abort(404, 'Archivo no encontrado');
+    //}
 
-    return response()->download($path, "{$client->id}-firmado.pdf");
+    return response()->download($path);
 }
 }

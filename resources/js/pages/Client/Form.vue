@@ -44,6 +44,20 @@ import { useForm } from '@inertiajs/vue3';
   }
 
   function submit() {
-    form.post(props.submitRoute);
+    form.post(props.submitRoute, {
+      onSuccess: (response) => {
+        console.log(response);
+        if (response.props.redirectUrl) {
+            window.location.href = response.props.redirectUrl;
+        }
+      },
+      onFinish: (response) => {
+        console.log(response);
+        ;
+      },
+      onError: (errors) => {
+        console.error(errors);
+      },
+    });
   }
   </script>
