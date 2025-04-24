@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UserController;
 use App\Models\Company;
@@ -148,6 +149,15 @@ Route::middleware('auth')->group(function () {
         ])->name('clients.store')
         ->can('create', User::class);
     });
+
+    Route::get('/pdf/{client}/firmar', [ClientController::class, 'form'])
+    ->name('pdf.form');
+    Route::get('/pdf/{clientId}/generar-plantilla', [ClientController::class, 'generarPlantilla'])
+    ->name('pdf.plantilla');
+
+Route::post('/pdf/{client}/firmar', [ClientController::class, 'firmar'])
+    ->name('pdf.firmar');
+    Route::get('pdf/descargar/{client}', [ClientController::class, 'descargar'])->name('pdf.download');
 
 
 });
